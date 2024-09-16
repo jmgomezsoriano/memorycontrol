@@ -38,15 +38,16 @@ def force_kill(process):
 def get_process(command_line):
     """Finds the process by its exact command line, excluding the current script's process."""
     current_pid = os.getpid()  # Get the PID of the current script process
+    script_name = os.path.basename(__file__)  # Get current filename
     for proc in psutil.process_iter(['pid', 'cmdline']):
         cmdline = proc.info['cmdline']
         
         # Ensure cmdline is a valid list before attempting to join it
         if cmdline and isinstance(cmdline, list):
             cmdline_str = " ".join(cmdline)
-            
+
             # Exclude the current script's process and check if the command line matches
-            if proc.info['pid'] != current_pid and command_line in cmdline_str:
+            if proc.info['pid'] != current_pid and script_name not in cmdline  and command_line in cmdline_str:
                 print(f"Process found: {proc.info}")
                 return proc
     return None
