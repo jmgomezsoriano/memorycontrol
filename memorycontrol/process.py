@@ -92,7 +92,7 @@ def always_run() -> bool:
 
 
 def monitor(
-        command: str,
+        command: List[str],
         stop_memory: int,
         kill_memory: int,
         check_interval: int = 5,
@@ -107,9 +107,9 @@ def monitor(
     :param stop_condition: A callable function that determines when the monitor should stop. By default, the monitor runs indefinitely.
     """
     stop_signal = False
-
     while not stop_condition():
         processes = get_processes(command)
+        # print(os.path.basename(__file__))
         if processes:
             memory_usage = sum([p.memory_info().rss for p in processes]) / (1024 * 1024)  # Convert to MB
             logger.info(f'Memory usage by "{command}": {memory_usage:.2f}MB')
@@ -132,23 +132,26 @@ def monitor(
         sleep(check_interval)
 
 
-def get_processes(command: str) -> List[Process]:
+def get_processes(command: List[str]) -> List[Process]:
     """ Find processes by its command line, excluding the current script's process.
 
     :param command: The command to check.
     :return: A list of processes that match with that command.
     """
-    processes = []
-    current_pid = os.getpid()  # Get the PID of the current script process
-    current_command = ' '.join(sys.argv)  # Get current filename
-    for process in process_iter(['pid', 'cmdline']):
-        proc_cmd = process.info['cmdline']
+    return [process for process in process_iter(['pid', 'cmdline']) if match_command(command, process.info['cmdline'])]
 
-        # Ensure cmdline is a valid list before attempting to join it
-        if proc_cmd:
-            cmdline = " ".join(proc_cmd) if  isinstance(proc_cmd, list) else proc_cmd
 
-            # Exclude the current script's process and check if the command line matches
-            if process.info['pid'] != current_pid and current_command not in cmdline and command in cmdline:
-                processes.append(process)
-    return processes
+def match_command(command: List[str], process: List[str]) -> bool:
+    """ Check when a command and a process are compatible.
+
+    :param command: The command to find.
+    :param process: The process command to comapre.
+
+    :return: True if both command lines are equivalents, otherwise, False.
+    """
+    if command and process and len(command) == len(process) and command[0] in process[0]:
+        for i, cmd in enumerate(command[1:], 1):
+            if cmd != process[i]:
+                return False
+        return True
+    return False

@@ -28,7 +28,7 @@ def main():
     log_level = getattr(logging, args.log_level, logging.WARNING)
     logging.basicConfig(level=log_level)
     # Call the main monitoring function
-    monitor(' '.join(args.command), args.stop_memory, args.kill_memory, args.check_interval)
+    monitor(args.command, args.stop_memory, args.kill_memory, args.check_interval)
 
 
 if __name__ == "__main__":
