@@ -2,7 +2,7 @@
 
 MemoryControl is a Python library that monitors the memory usage of processes on both Linux and Windows systems. It can gracefully terminate processes when they exceed a defined memory limit and forcefully kill them if they exceed a second, higher threshold.
 
-## Features
+# Features
 
 - Monitors processes based on their command line.
 - Configurable memory limits for graceful termination and forced shutdown.
@@ -10,19 +10,43 @@ MemoryControl is a Python library that monitors the memory usage of processes on
 - Automatically sends appropriate signals depending on the operating system (SIGINT and SIGKILL for Linux, terminate and kill for Windows).
 - Customizable time intervals between memory checks.
 
-## Installation
-
-MemoryControl requires `psutil` to work. To install the necessary dependencies, run:
+# Installation
 
 ```bash
-pip install psutil
+pip install memorycontrol
 ```
 
-## Usage
+# Usage
 
-You can use the library either as a Python module or from the command line.
+## Command line
 
-### As a Python Module
+```text
+memorycontrol -h
+usage: __main__.py [-h] [-s MB] [-k MB] [--check-interval SECONDS] [--log-level LEVEL] COMMAND [COMMAND ...]
+
+Monitor a process by its command line and memory limits.
+
+positional arguments:
+  COMMAND               Exact command line of the process to monitor (e.g., 'uvicorn api.server:app --port 8001').
+
+options:
+  -h, --help            show this help message and exit
+  -s MB, --stop-memory MB
+                        Memory limit in MB to send an interrupt signal. By default, 100 MB.
+  -k MB, --kill-memory MB
+                        Memory threshold in MB to forcefully terminate the process. By default, 200 MB.If this argument is set to 0, then, no limit.
+  --check-interval SECONDS
+                        Interval in seconds for memory checks (default: 5 seconds).
+  --log-level LEVEL     Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+```
+
+For example, if you want to monitor the command "uvicorn api.server:app --port 8001":
+
+```bash
+memorycontrol --stop-memory 100 --kill-memory 200 --check-interval 5 -- uvicorn api.server:app --port 8001
+```
+
+## Module
 
 Import the `monitor` function and specify the command line, memory limits, and check intervals:
 
@@ -38,27 +62,3 @@ check_interval = 5  # seconds
 # Start monitoring
 monitor(command_line, memory_limit, kill_memory_threshold, check_interval)
 ```
-
-### From the Command Line
-
-You can also run the monitor directly from the command line:
-
-```bash
-python -m memorycontrol --command_line "uvicorn api.server:app --port 8001" --memory_limit 100 --kill_memory_threshold 200 --check_interval 5
-```
-
-## Example
-
-1. Start a process you want to monitor, e.g., a `uvicorn` server:
-
-```bash
-uvicorn api.server:app --port 8001 
-```
-
-2. Monitor the process and enforce memory limits:
-
-```python
-from memorycontrol import monitor
-
-monitor("uvicorn api.server:app --port 8001", memory_limit=100, kill_memory_threshold=200, check_interval=5)
-````

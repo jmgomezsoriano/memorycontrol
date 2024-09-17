@@ -9,11 +9,16 @@ setup(
     url='https://github.com/yourusername/memorycontrol',
     packages=find_packages(),
     install_requires=[
-        'psutil',  # Add the core dependency
+        'psutil==6.0.0',
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'memorycontrol=memorycontrol:main'
+        ]
+    }
 )
