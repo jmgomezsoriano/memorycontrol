@@ -1,6 +1,5 @@
 import platform
 import os
-import sys
 
 from enum import Enum
 from logging import getLogger
@@ -104,15 +103,15 @@ def monitor(
     :param stop_memory: The memory threshold (in MB/GB) at which a stop signal is sent.
     :param kill_memory: The maximum memory usage (in MB/GB) before forcefully killing the process.
     :param check_interval: Time interval (in seconds) between memory usage checks.
-    :param stop_condition: A callable function that determines when the monitor should stop. By default, the monitor runs indefinitely.
+    :param stop_condition: A callable function that determines when the monitor should stop.
+           By default, the monitor runs indefinitely.
     """
     stop_signal = False
     while not stop_condition():
         processes = get_processes(command)
-        # print(os.path.basename(__file__))
         if processes:
             memory_usage = sum([p.memory_info().rss for p in processes]) / (1024 * 1024)  # Convert to MB
-            logger.info(f'Memory usage by "{command}": {memory_usage:.2f}MB')
+            logger.info(f'Memory usage by {command}: {memory_usage:.2f}MB')
             if kill_memory and memory_usage > kill_memory:
                 logger.warning(f'Memory usage exceeds the kill threshold ({kill_memory}MB). '
                                f'Forcefully terminating the process...')
@@ -128,7 +127,8 @@ def monitor(
             else:
                 stop_signal = False
         else:
-            logger.info(f'The process with command line "{command}" was not found. Retrying in {check_interval} seconds...')
+            logger.info(f'The process with command line {command} was not found. '
+                        f'Retrying in {check_interval} seconds...')
         sleep(check_interval)
 
 
@@ -145,7 +145,7 @@ def match_command(command: List[str], process: List[str]) -> bool:
     """ Check when a command and a process are compatible.
 
     :param command: The command to find.
-    :param process: The process command to comapre.
+    :param process: The process command to compare with.
 
     :return: True if both command lines are equivalents, otherwise, False.
     """

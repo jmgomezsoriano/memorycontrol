@@ -23,7 +23,7 @@ def main():
 
     args = parser.parse_args()
     if args.kill_memory and args.kill_memory <= args.stop_memory:
-        parser.error('The --kill-memory cannot be equal or lower than --stop-memory' )
+        parser.error('The --kill-memory cannot be equal or lower than --stop-memory')
 
     log_level = getattr(logging, args.log_level, logging.WARNING)
     logging.basicConfig(level=log_level)
