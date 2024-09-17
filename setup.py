@@ -18,7 +18,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'memorycontrol=memorycontrol:main'
+            'memorycontrol=memorycontrol.__main__:main'
         ]
     }
 )
