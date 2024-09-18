@@ -15,7 +15,7 @@ def main():
     parser.add_argument('-k', '--kill-memory', type=int, default=200, metavar='MB',
                         help='Memory threshold in MB to forcefully terminate the process. By default, 200 MB.'
                              'If this argument is set to 0, then, no limit.')
-    parser.add_argument('--check-interval', type=int, default=5, metavar='SECONDS',
+    parser.add_argument('-i', '--check-interval', type=int, default=5, metavar='SECONDS',
                         help="Interval in seconds for memory checks (default: 5 seconds).")
     parser.add_argument('--log-level', metavar='LEVEL', type=str, default='WARNING',
                         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
